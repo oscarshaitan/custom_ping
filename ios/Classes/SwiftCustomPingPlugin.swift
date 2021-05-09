@@ -9,6 +9,29 @@ public class SwiftCustomPingPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    guard call.method == "getNetworkType" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+    guard let reachability = Reachability() else {
+        result("NONE")
+        return
+    }
+    reachability.whenReachable = { reachability in
+        DispatchQueue.main.async {
+            if reachability.connection == .wifi {
+                result("wifi")
+            } else if reachability.connection == .cellular {
+                result("cellular")
+            } else {
+                result("none")
+            }
+        }
+    }
+    do {
+        try reachability.startNotifier()
+    } catch {
+        result("none")
+    }
   }
 }
