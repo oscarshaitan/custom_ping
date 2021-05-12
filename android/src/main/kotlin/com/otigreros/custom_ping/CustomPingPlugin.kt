@@ -70,7 +70,7 @@ class Connectivity(private val connectivityManager: ConnectivityManager) {
                     return "wifi"
                 }
                 if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    return "mobile"
+                    return "cellular"
                 }
             }
             return networkTypeLegacy

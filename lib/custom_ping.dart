@@ -89,7 +89,7 @@ class PingService {
 class ReachServerFailException implements Exception {}
 
 ///Enum that define the possible networks
-enum NetWorkType { WIFI, MOBILE, NONE }
+enum NetWorkType { WIFI, CELLULAR, NONE }
 
 ///
 class CustomPingInfo {
