@@ -25,4 +25,4 @@ flutter:
       ios:
         pluginClass: CustomPingPlugin
       macos:
-        pluginClass: HelloPlugin
+        pluginClass: CustomPingPlugin
