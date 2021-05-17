@@ -1,8 +1,7 @@
 name: custom_ping
 description: A ping service to fix the ping issue on Colombia networks. Where a valid ping donsnt mean the phone will have navigation
-version: 0.0.1+3
+version: 0.0.1+4
 homepage: https://github.com/oscarshaitan/custom_ping
-
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -25,4 +24,5 @@ flutter:
         pluginClass: CustomPingPlugin
       ios:
         pluginClass: CustomPingPlugin
-
+      macos:
+        pluginClass: CustomPingPlugin

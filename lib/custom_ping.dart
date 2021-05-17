@@ -32,10 +32,14 @@ class PingService {
   Stream<CustomPingInfo> _pingTick() async* {
     while (true) {
       await Future.delayed(timeout);
-      var networkType = await _channel.invokeMethod("getNetworkType");
-      bool hasConnection = await _pingServer();
-      yield CustomPingInfo(networkType, hasConnection);
+      yield (await pingTick());
     }
+  }
+
+  Future<CustomPingInfo> pingTick() async {
+    var networkType = await _channel.invokeMethod("getNetworkType");
+    bool hasConnection = await _pingServer();
+    return CustomPingInfo(networkType, hasConnection);
   }
 
   ///set the Stream to null in order to avoid unnecessary calls
@@ -89,7 +93,7 @@ class PingService {
 class ReachServerFailException implements Exception {}
 
 ///Enum that define the possible networks
-enum NetWorkType { WIFI, MOBILE, NONE }
+enum NetWorkType { WIFI, CELLULAR, NONE }
 
 ///
 class CustomPingInfo {
