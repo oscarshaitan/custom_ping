@@ -30,5 +30,7 @@ Single call:
 PingService().pingTick();
 ```
 
+![CustomPing](src/custom_ping.gif)
+
 
 
