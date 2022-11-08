@@ -13,3 +13,6 @@
 ## [0.0.1+4] - 17 May 2021.
 #NetworkType feature for ios added
 #Single call added
+
+## [0.1.0+5] -  8 Nov 2022.
+#Minor versions updates
