@@ -16,3 +16,6 @@
 
 ## [0.1.0+5] -  8 Nov 2022.
 #Minor versions updates
+
+## [0.2.0+1] -  5 Jul 2023.
+#Minor versions updates

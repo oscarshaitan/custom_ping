@@ -14,7 +14,7 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   String service = 'No call';
-  StreamSubscription subscription;
+  late StreamSubscription subscription;
   int pingCount = 0;
 
   @override
@@ -22,8 +22,7 @@ class _ExampleState extends State<Example> {
     subscription = PingService().getSubscription(callBack: (e) {
       setState(() {
         pingCount++;
-        service =
-            'Ping has connection ${e.hasConnection}, with ${e.getNetworkTye} count: $pingCount';
+        service = 'Ping has connection ${e.hasConnection}, with ${e.getNetworkTye} count: $pingCount';
       });
     });
     super.initState();

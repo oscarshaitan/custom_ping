@@ -68,8 +68,7 @@ class PingService {
     try {
       Uri url = Uri.parse(urlTarget);
 
-      Response response =
-          await _httpClient.get(url).timeout(timeout, onTimeout: () {
+      Response response = await _httpClient.get(url).timeout(timeout, onTimeout: () {
         throw ReachServerFailException();
       });
 
@@ -80,8 +79,7 @@ class PingService {
   }
 
   ///Return a Subscription to the Ping Stream
-  StreamSubscription getSubscription(
-      {required Function(CustomPingInfo) callBack}) {
+  StreamSubscription getSubscription({required Function(CustomPingInfo) callBack}) {
     if (_connection == null) {
       _restartStream();
     }
@@ -102,6 +100,6 @@ class CustomPingInfo {
 
   CustomPingInfo(this._netWorkType, this.hasConnection);
 
-  NetWorkType get getNetworkTye => NetWorkType.values.firstWhere(
-      (element) => element.toString().contains(_netWorkType.toUpperCase()));
+  NetWorkType get getNetworkTye =>
+      NetWorkType.values.firstWhere((element) => element.toString().contains(_netWorkType.toUpperCase()));
 }
