@@ -19,3 +19,6 @@
 
 ## [0.2.0+1] -  5 Jul 2023.
 #Minor versions updates
+
+## [0.2.1+1] -  17 Jul 2023.
+#Fix on ios replace that makes the airplane mode fails
