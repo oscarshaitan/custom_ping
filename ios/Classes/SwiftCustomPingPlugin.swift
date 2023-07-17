@@ -18,6 +18,7 @@ public class SwiftCustomPingPlugin: NSObject, FlutterPlugin {
         return
     }
     reachability.whenReachable = { reachability in
+        reachability.stopNotifier()
         DispatchQueue.main.async {
             if reachability.connection == .wifi {
                 result("wifi")
