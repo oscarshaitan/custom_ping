@@ -22,7 +22,7 @@ class _ExampleState extends State<Example> {
     subscription = PingService().getSubscription(callBack: (e) {
       setState(() {
         pingCount++;
-        service = 'Ping has connection ${e.hasConnection}, with ${e.getNetworkTye} count: $pingCount';
+        service = 'Ping has connection $e, count: $pingCount';
       });
     });
     super.initState();
