@@ -22,3 +22,6 @@
 
 ## [0.2.1+1] -  17 Jul 2023.
 #Fix on ios replace that makes the airplane mode fails
+
+## [0.2.3+1] -  17 Jul 2023.
+#Remove the support to know the network adapter

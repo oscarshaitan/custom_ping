@@ -19,7 +19,7 @@ PingService().getSubscription(callBack: (e) {
        setState(() {
          pingCount++;
          service =
-             'Ping has connection ${e.hasConnection}, with ${e.getNetworkTye} count: $pingCount';
+             'Ping has connection ${hasConnection}count: $pingCount';
        });
      });
 ```
