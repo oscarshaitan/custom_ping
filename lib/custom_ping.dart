@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 
 class PingService {
-  static const MethodChannel _channel = const MethodChannel('custom_ping');
-
   ///This Stream is the one in charge of continuously doing the ping to the designated url.
-  late Stream<CustomPingInfo>? _connection;
+  late Stream<bool>? _connection;
 
   ///The [urlTarget] is the destination to ping as default we are going to use google.com but could be a designated url on your backend or functions in your firebase
   final String urlTarget;
@@ -29,17 +26,16 @@ class PingService {
   }
 
   ///Main infinite loop this loop continuously will try to complete a fetch on the [urlTarget]
-  Stream<CustomPingInfo> _pingTick() async* {
+  Stream<bool> _pingTick() async* {
     while (true) {
       await Future.delayed(timeout);
       yield (await pingTick());
     }
   }
 
-  Future<CustomPingInfo> pingTick() async {
-    var networkType = await _channel.invokeMethod("getNetworkType");
+  Future<bool> pingTick() async {
     bool hasConnection = await _pingServer();
-    return CustomPingInfo(networkType, hasConnection);
+    return hasConnection;
   }
 
   ///set the Stream to null in order to avoid unnecessary calls
@@ -79,7 +75,7 @@ class PingService {
   }
 
   ///Return a Subscription to the Ping Stream
-  StreamSubscription getSubscription({required Function(CustomPingInfo) callBack}) {
+  StreamSubscription getSubscription({required Function(bool) callBack}) {
     if (_connection == null) {
       _restartStream();
     }
@@ -89,17 +85,3 @@ class PingService {
 }
 
 class ReachServerFailException implements Exception {}
-
-///Enum that define the possible networks
-enum NetWorkType { WIFI, CELLULAR, NONE }
-
-///
-class CustomPingInfo {
-  final String _netWorkType;
-  final bool hasConnection;
-
-  CustomPingInfo(this._netWorkType, this.hasConnection);
-
-  NetWorkType get getNetworkTye =>
-      NetWorkType.values.firstWhere((element) => element.toString().contains(_netWorkType.toUpperCase()));
-}

@@ -14,7 +14,7 @@ public class SwiftCustomPingPlugin: NSObject, FlutterPlugin {
         return
       }
     guard let reachability = Reachability() else {
-        result("NONE")
+        result("none")
         return
     }
     reachability.whenReachable = { reachability in
