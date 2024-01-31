@@ -64,7 +64,7 @@ class PingService {
     try {
       Uri url = Uri.parse(urlTarget);
 
-      Response response = await _httpClient.get(url).timeout(timeout, onTimeout: () {
+      Response response = await _httpClient.head(url).timeout(timeout, onTimeout: () {
         throw ReachServerFailException();
       });
 
