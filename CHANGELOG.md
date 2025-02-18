@@ -37,3 +37,6 @@
 
 ## [0.3.2+1] -  18 Feb 2025.
 #Update http, gradle and routine updates
+
+## [0.3.3+1] -  18 Feb 2025.
+#Update http, gradle and routine updates

@@ -2,7 +2,7 @@ group 'com.otigreros.custom_ping'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.22'
+    ext.kotlin_version = '2.1.10'
     repositories {
         google()
         mavenCentral()
@@ -38,11 +38,11 @@ android {
             // Flag to enable support for the new language APIs
             //coreLibraryDesugaringEnabled true
             // Sets Java compatibility to Java 8
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility JavaVersion.VERSION_17
         }
         kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8
+            jvmTarget = JavaVersion.VERSION_17
         }
     }
 }
