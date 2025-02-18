@@ -28,3 +28,6 @@
 
 ## [0.2.3+1] -  17 Jul 2023.
 #Remove the support to know the network adapter
+
+## [0.3.0+1] -  18 Feb 2025.
+#Update http, gradle and routine updates
