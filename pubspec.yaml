@@ -1,6 +1,6 @@
 name: custom_ping
 description: A ping service to fix the ping issue on Colombia networks. Where a valid ping donsnt mean the phone will have navigation
-version: 0.3.3+1
+version: 0.3.4+1
 homepage: https://github.com/oscarshaitan/custom_ping
 
 environment:

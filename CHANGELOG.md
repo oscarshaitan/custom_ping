@@ -40,3 +40,6 @@
 
 ## [0.3.3+1] -  18 Feb 2025.
 #Update http, gradle and routine updates
+
+## [0.3.4+1] -  22 Feb 2025.
+#roll back target sdk
