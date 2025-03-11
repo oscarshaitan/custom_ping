@@ -59,12 +59,11 @@ class PingService {
     );
   }
 
-  ///Calls get to the [urlTarget] the timing between pings and the timeout are the same
+  ///Calls head to the [urlTarget] the timing between pings and the timeout are the same
   Future<bool> _pingServer() async {
     try {
       Uri url = Uri.parse(urlTarget);
-
-      Response response = await _httpClient.get(url).timeout(timeout, onTimeout: () {
+      Response response = await _httpClient.head(url).timeout(timeout, onTimeout: () {
         throw ReachServerFailException();
       });
 
