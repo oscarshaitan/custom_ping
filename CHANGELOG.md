@@ -44,5 +44,5 @@
 ## [0.3.4+1] -  22 Feb 2025.
 #roll back target sdk
 
-## [0.3.4+1] -  11 March 2025.
+## [0.3.5+1] -  11 March 2025.
 #replace .get for .head to reduce the data usage thanks to @danielgomezrico
