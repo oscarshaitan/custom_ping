@@ -159,8 +159,8 @@ void main() {
     });
   });
 
-  group('after the last listener cancels (today: the loop is never stopped)', () {
-    test('the requests keep going', () {
+  group('after the last listener cancels, the loop stops', () {
+    test('no more requests', () {
       fakeAsync((async) {
         final subscription = _service(server).getSubscription(callBack: (_) {});
         async.elapse(_tick);
@@ -169,24 +169,77 @@ void main() {
         subscription.cancel();
         async.elapse(_tick * 3);
 
-        expect(server.requests, hasLength(4));
+        expect(server.requests, hasLength(1));
       });
     });
 
-    test('subscribing again starts a second loop next to the first', () {
+    test('cancelling before the first result sends nothing at all', () {
+      fakeAsync((async) {
+        final subscription = _service(server).getSubscription(callBack: (_) {});
+        async.elapse(const Duration(seconds: 1));
+
+        subscription.cancel();
+        async.elapse(_tick * 3);
+
+        expect(server.requests, isEmpty);
+      });
+    });
+
+    test('a request in flight at the cancel is the last one sent, and its result is not delivered', () {
+      fakeAsync((async) {
+        final answer = Completer<http.Response>();
+        server.handler = (_) => answer.future;
+        final events = <bool>[];
+        final subscription = _service(server).getSubscription(callBack: events.add);
+        async.elapse(_tick);
+        expect(server.requests, hasLength(1));
+
+        subscription.cancel();
+        answer.complete(http.Response('', 200));
+        async.elapse(_tick * 3);
+
+        expect(server.requests, hasLength(1));
+        expect(events, isEmpty);
+      });
+    });
+
+    test('subscribing again runs a single loop', () {
       fakeAsync((async) {
         final service = _service(server);
         final first = service.getSubscription(callBack: (_) {});
         async.elapse(_tick);
         first.cancel();
 
-        final second = service.getSubscription(callBack: (_) {});
+        final events = <bool>[];
+        final second = service.getSubscription(callBack: events.add);
         final before = server.requests.length;
-        async.elapse(_tick);
+        async.elapse(_tick * 2);
 
         expect(server.requests.length - before, 2);
+        expect(events, [true, true]);
 
         second.cancel();
+      });
+    });
+
+    test('opening and closing a screen many times leaves no loop behind', () {
+      fakeAsync((async) {
+        final service = _service(server);
+        for (var i = 0; i < 5; i++) {
+          final subscription = service.getSubscription(callBack: (_) {});
+          async.elapse(_tick);
+          subscription.cancel();
+        }
+        expect(server.requests, hasLength(5));
+
+        async.elapse(_tick * 10);
+        expect(server.requests, hasLength(5));
+
+        final subscription = service.getSubscription(callBack: (_) {});
+        async.elapse(_tick * 2);
+        expect(server.requests, hasLength(7));
+
+        subscription.cancel();
       });
     });
   });

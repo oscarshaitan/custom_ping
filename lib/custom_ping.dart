@@ -18,6 +18,9 @@ class PingService {
   ///This counter hold the amount off subscriptions that we have
   int _clients = 0;
 
+  ///Every loop is started for one generation. When its stream loses its last listener the generation moves on, so the loop sends nothing more and ends
+  int _generation = 0;
+
   PingService({
     this.urlTarget = 'https://www.google.com/',
     this.timeout = const Duration(seconds: 3),
@@ -25,10 +28,11 @@ class PingService {
     _restartStream();
   }
 
-  ///Main infinite loop this loop continuously will try to complete a fetch on the [urlTarget]
-  Stream<bool> _pingTick() async* {
-    while (true) {
+  ///Main loop: while its generation is current it will continuously try to complete a fetch on the [urlTarget]
+  Stream<bool> _pingTick(int generation) async* {
+    while (generation == _generation) {
       await Future.delayed(timeout);
+      if (generation != _generation) return;
       yield (await pingTick());
     }
   }
@@ -45,11 +49,13 @@ class PingService {
 
   ///set the Stream to start looping the get calls
   void _restartStream() {
-    _connection = _pingTick().asBroadcastStream(
-      onCancel: (_) {
+    _connection = _pingTick(_generation).asBroadcastStream(
+      onCancel: (loop) {
         ///when don't have any one listen to the ping service we stop the calls
         _clients--;
         if (_clients == 0) {
+          _generation++;
+          loop.cancel();
           _pauseStream();
         }
       },
