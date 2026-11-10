@@ -29,7 +29,7 @@ apply plugin: 'com.android.library'
 // (the Flutter 3.47 app template sets that).
 def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
 def builtInKotlin = agpMajor >= 9 &&
-        project.findProperty('android.builtInKotlin')?.toString()?.trim() != 'false'
+        !project.findProperty('android.builtInKotlin')?.toString()?.trim()?.equalsIgnoreCase('false')
 if (!builtInKotlin) {
     apply plugin: 'kotlin-android'
 }

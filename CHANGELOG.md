@@ -1,4 +1,5 @@
 ## [0.4.0] - 10 Nov 2026
+- **Breaking (build requirements):** needs Flutter 3.35 or later (Dart 3.9), and on Android the Kotlin Gradle plugin 1.8.10 or later, AGP 8 or 9 and JDK 17 (the same floor Flutter 3.35's own Gradle checks enforce). Apps still on Flutter 3.34 or older stay on 0.3.x.
 - Builds on Flutter 3.47.9 as well as 3.35.7. No Dart or native behaviour change: the `PingService` API and the Android and iOS code are unchanged.
 - Android: the Kotlin Android plugin is applied only where Android Gradle Plugin's built-in Kotlin is off (AGP 8, or AGP 9 with `android.builtInKotlin=false`), so the plugin builds with AGP 8 (Flutter 3.35) and AGP 9 (Flutter 3.47). Kotlin's JVM target is set on the compile tasks instead of `kotlinOptions`, the deprecated `compileSdkVersion`/`minSdkVersion` forms are replaced and the library no longer sets `targetSdkVersion`. The explicit `kotlin-stdlib-jdk7` dependency is dropped; the Kotlin plugin adds the stdlib that matches the app's Kotlin version.
 - iOS: the podspec's minimum platform goes from iOS 8.0 to 12.0 (Flutter's own minimum is higher, so no app loses support).
