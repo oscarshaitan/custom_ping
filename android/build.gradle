@@ -26,12 +26,16 @@ apply plugin: 'com.android.library'
 // AGP 9 compiles Kotlin itself ("built-in Kotlin", on by default) and fails if
 // the Kotlin Android plugin is applied as well. Apply it only where built-in
 // Kotlin is off: AGP 8 (Flutter 3.35), or AGP 9 with android.builtInKotlin=false
-// (the Flutter 3.47 app template sets that).
+// (the Flutter 3.47 app template sets that; Flutter 3.47 then applies the plugin
+// to plugins itself, and applying it again here is a no-op).
+// pluginManager.apply, not an `apply plugin:` line: Flutter 3.47 scans plugin
+// build files for that text and reports the plugin as unmigrated whether or not
+// the line runs.
 def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
 def builtInKotlin = agpMajor >= 9 &&
         !project.findProperty('android.builtInKotlin')?.toString()?.trim()?.equalsIgnoreCase('false')
 if (!builtInKotlin) {
-    apply plugin: 'kotlin-android'
+    pluginManager.apply('kotlin-android')
 }
 
 android {

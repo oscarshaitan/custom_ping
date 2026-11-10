@@ -67,10 +67,18 @@ jobs:
         run: .github/scripts/example_use_agp9.sh ${{ matrix.agp9_built_in_kotlin }}
       - name: Build debug APK
         working-directory: custom_ping_example
+        shell: bash
         run: |
           flutter pub get
-          flutter build apk --debug
+          flutter build apk --debug 2>&1 | tee "$RUNNER_TEMP/build.log"
           ls -la build/app/outputs/flutter-apk/app-debug.apk
+      - name: Flutter does not report custom_ping as applying the Kotlin Gradle plugin
+        shell: bash
+        run: |
+          if grep -E "plugins that apply Kotlin Gradle Plugin.*custom_ping" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Flutter reports custom_ping as a plugin that applies KGP"
+            exit 1
+          fi
 
   ios:
     name: Example iOS simulator build (Flutter ${{ matrix.flutter }})
