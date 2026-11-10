@@ -2,14 +2,14 @@ group 'com.otigreros.custom_ping'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.22'
+    ext.kotlin_version = '2.2.20'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.11.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -22,31 +22,40 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+// AGP 9 compiles Kotlin itself ("built-in Kotlin", on by default) and fails if
+// the Kotlin Android plugin is applied as well. Apply it only where built-in
+// Kotlin is off: AGP 8 (Flutter 3.35), or AGP 9 with android.builtInKotlin=false
+// (the Flutter 3.47 app template sets that; Flutter 3.47 then applies the plugin
+// to plugins itself, and applying it again here is a no-op).
+// pluginManager.apply, not an `apply plugin:` line: Flutter 3.47 scans plugin
+// build files for that text and reports the plugin as unmigrated whether or not
+// the line runs.
+def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+def builtInKotlin = agpMajor >= 9 &&
+        !project.findProperty('android.builtInKotlin')?.toString()?.trim()?.equalsIgnoreCase('false')
+if (!builtInKotlin) {
+    pluginManager.apply('kotlin-android')
+}
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     namespace 'com.otigreros.custom_ping_example'
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 34
-        compileOptions {
-            // Flag to enable support for the new language APIs
-            //coreLibraryDesugaringEnabled true
-            // Sets Java compatibility to Java 8
-            sourceCompatibility JavaVersion.VERSION_17
-            targetCompatibility JavaVersion.VERSION_17
-        }
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_17
-        }
+        minSdk 23
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
