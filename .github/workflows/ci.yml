@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Flutter ${{ matrix.flutter }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter: ["3.35.7", "3.47.9"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+          cache: true
+      - run: flutter --version
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos
+      - run: flutter test
+      - run: dart pub publish --dry-run
+
+  android:
+    name: Example debug APK (Flutter ${{ matrix.flutter }}, ${{ matrix.agp }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flutter: "3.35.7"
+            agp: "AGP 8"
+          - flutter: "3.47.9"
+            agp: "AGP 8"
+          - flutter: "3.47.9"
+            agp: "AGP 9, built-in Kotlin"
+            agp9_built_in_kotlin: "true"
+          - flutter: "3.47.9"
+            agp: "AGP 9, builtInKotlin=false"
+            agp9_built_in_kotlin: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+          cache: true
+      - name: Switch the example to AGP 9
+        if: matrix.agp9_built_in_kotlin != ''
+        run: .github/scripts/example_use_agp9.sh ${{ matrix.agp9_built_in_kotlin }}
+      - name: Build debug APK
+        working-directory: custom_ping_example
+        run: |
+          flutter pub get
+          flutter build apk --debug
+          ls -la build/app/outputs/flutter-apk/app-debug.apk
+
+  ios:
+    name: Example iOS simulator build (Flutter ${{ matrix.flutter }})
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter: ["3.35.7", "3.47.9"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+          cache: true
+      - run: xcodebuild -version
+      - name: Build for the iOS simulator
+        working-directory: custom_ping_example
+        run: |
+          flutter pub get
+          flutter build ios --simulator --debug
+          ls -d build/ios/iphonesimulator/Runner.app
