@@ -222,6 +222,31 @@ void main() {
       });
     });
 
+    test('subscribing again while the old request is in flight: the old result never reaches the new listener', () {
+      fakeAsync((async) {
+        final answer = Completer<http.Response>();
+        server.handler = (_) => answer.future;
+        final service = _service(server);
+        final first = service.getSubscription(callBack: (_) {});
+        async.elapse(_tick);
+        expect(server.requests, hasLength(1));
+        first.cancel();
+
+        server.handler = (_) async => http.Response('', 503);
+        final events = <bool>[];
+        final second = service.getSubscription(callBack: events.add);
+        answer.complete(http.Response('', 200));
+        async.flushMicrotasks();
+        expect(events, isEmpty);
+
+        async.elapse(_tick * 2);
+        expect(server.requests, hasLength(3));
+        expect(events, [false, false]);
+
+        second.cancel();
+      });
+    });
+
     test('opening and closing a screen many times leaves no loop behind', () {
       fakeAsync((async) {
         final service = _service(server);

@@ -1,5 +1,6 @@
 ## [0.3.6] - 5 Nov 2026
 - Fix: stop the ping loop when the last subscription is cancelled. Before, the loop kept running, and every cancel followed by a new `getSubscription` started another one, each sending a HEAD to `urlTarget` every `timeout` for the life of the app.
+- Move `flutter_lints` from `dependencies` to `dev_dependencies`, so apps that use this package no longer resolve it (it needs Dart 3.8).
 
 ## [0.3.5+2] - 02 Oct 2025
 - Replace deprecated `jcenter()` with `mavenCentral()` to remove Gradle 9 deprecation warning.

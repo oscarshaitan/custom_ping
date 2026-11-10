@@ -32,6 +32,7 @@ class PingService {
   Stream<bool> _pingTick(int generation) async* {
     while (generation == _generation) {
       await Future.delayed(timeout);
+      ///cancelling the subscription does not interrupt the delay above, so check again before sending another request
       if (generation != _generation) return;
       yield (await pingTick());
     }
