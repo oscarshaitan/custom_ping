@@ -95,9 +95,64 @@ jobs:
           flutter-version: ${{ matrix.flutter }}
           cache: true
       - run: xcodebuild -version
-      - name: Build for the iOS simulator
+      # Flutter 3.47 turns Swift Package Manager on by default; this leg keeps
+      # proving the CocoaPods path, so it is switched off explicitly.
+      - run: flutter config --no-enable-swift-package-manager
+      - name: Build for the iOS simulator (CocoaPods)
         working-directory: custom_ping_example
         run: |
           flutter pub get
           flutter build ios --simulator --debug
           ls -d build/ios/iphonesimulator/Runner.app
+      - name: custom_ping was integrated as a CocoaPods pod
+        working-directory: custom_ping_example/ios
+        run: |
+          grep -E "^  - custom_ping " Podfile.lock
+          ls -d Pods/Target\ Support\ Files/custom_ping
+
+  ios-swiftpm:
+    name: Example iOS simulator build, Swift Package Manager (Flutter ${{ matrix.flutter }})
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter: ["3.47.9"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+          cache: true
+      - run: xcodebuild -version
+      - run: flutter config --enable-swift-package-manager
+      - name: Build for the iOS simulator (Swift Package Manager)
+        working-directory: custom_ping_example
+        shell: bash
+        run: |
+          flutter pub get
+          flutter build ios --simulator --debug 2>&1 | tee "$RUNNER_TEMP/build.log"
+          ls -d build/ios/iphonesimulator/Runner.app
+      - name: custom_ping resolved as a Swift package, not a CocoaPods pod
+        working-directory: custom_ping_example/ios
+        shell: bash
+        run: |
+          set -euo pipefail
+          generated=Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift
+          cat "$generated"
+          grep -E '\.package\(name: "custom_ping", path: ' "$generated"
+          grep -F '.product(name: "custom-ping", package: "custom_ping")' "$generated"
+          grep -F 'FlutterGeneratedPluginSwiftPackage' Runner.xcodeproj/project.pbxproj
+          if grep -E "do not support Swift Package Manager|custom_ping.*CocoaPods" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Flutter reports custom_ping as needing CocoaPods"
+            exit 1
+          fi
+          if [ -f Podfile.lock ] && grep -q "custom_ping" Podfile.lock; then
+            echo "::error::custom_ping is in Podfile.lock"
+            exit 1
+          fi
+          if [ -d Pods ] && find Pods -maxdepth 2 -name 'custom_ping*' | grep -q .; then
+            echo "::error::custom_ping was installed as a pod"
+            exit 1
+          fi
+          echo "custom_ping resolved through Swift Package Manager; no CocoaPods pod for it."
