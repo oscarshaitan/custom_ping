@@ -13,7 +13,7 @@ Custom ping for target a specific url target
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'custom_ping/Sources/custom_ping/**/*'
+  s.source_files = 'custom_ping/Sources/custom_ping/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
 
