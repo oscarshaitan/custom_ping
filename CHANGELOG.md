@@ -1,4 +1,4 @@
-## Unreleased
+## [0.5.0] - 19 Nov 2026
 - iOS: Swift Package Manager support. The plugin ships `ios/custom_ping/Package.swift` (the layout Flutter 3.47's plugin template uses), so apps with Swift Package Manager on (the default from Flutter 3.47) resolve custom_ping as a Swift package instead of a CocoaPods pod. CocoaPods keeps working: the podspec now points at the same sources.
 - iOS: the sources moved from `ios/Classes/` to `ios/custom_ping/Sources/custom_ping/`. The Objective-C registrant (`CustomPingPlugin.h/.m`) is gone; `CustomPingPlugin` is now the Swift class that registers the method channel (it was `SwiftCustomPingPlugin`). The `pluginClass` in pubspec is unchanged, so apps need no change.
 - iOS minimum stays 12.0 in both the podspec and Package.swift.
