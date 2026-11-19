@@ -1,3 +1,10 @@
+## Unreleased
+- iOS: Swift Package Manager support. The plugin ships `ios/custom_ping/Package.swift` (the layout Flutter 3.47's plugin template uses), so apps with Swift Package Manager on (the default from Flutter 3.47) resolve custom_ping as a Swift package instead of a CocoaPods pod. CocoaPods keeps working: the podspec now points at the same sources.
+- iOS: the sources moved from `ios/Classes/` to `ios/custom_ping/Sources/custom_ping/`. The Objective-C registrant (`CustomPingPlugin.h/.m`) is gone; `CustomPingPlugin` is now the Swift class that registers the method channel (it was `SwiftCustomPingPlugin`). The `pluginClass` in pubspec is unchanged, so apps need no change.
+- iOS minimum stays 12.0 in both the podspec and Package.swift.
+- No Dart, Android or behaviour change: the `custom_ping` method channel, its `getNetworkType` call and its results are the same, and `Reachability.swift` is unchanged.
+- CI: the existing iOS legs build the example through CocoaPods (Swift Package Manager switched off explicitly, since Flutter 3.47 turns it on by default) and check custom_ping is a pod; a new leg on Flutter 3.47.9 builds it through Swift Package Manager and checks custom_ping resolved as a Swift package with no pod for it.
+
 ## [0.4.0] - 10 Nov 2026
 - **Breaking (build requirements):** needs Flutter 3.35 or later (Dart 3.9), and on Android the Kotlin Gradle plugin 1.8.10 or later, AGP 8 or 9 and JDK 17 (the same floor Flutter 3.35's own Gradle checks enforce). Apps still on Flutter 3.34 or older stay on 0.3.x.
 - Builds on Flutter 3.47.9 as well as 3.35.7. No Dart or native behaviour change: the `PingService` API and the Android and iOS code are unchanged.

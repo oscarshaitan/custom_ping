@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftCustomPingPlugin: NSObject, FlutterPlugin {
+public class CustomPingPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "custom_ping", binaryMessenger: registrar.messenger())
-    let instance = SwiftCustomPingPlugin()
+    let instance = CustomPingPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
